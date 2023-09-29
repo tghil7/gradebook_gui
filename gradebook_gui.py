@@ -6,11 +6,22 @@ import datetime;
 import csv;
 import copy;
 
-#Create a frame and add it to the root module
+#Create a frame 
 m = tk.Tk(); 
-m.title ('Python GUI Gradebook')
-m.geometry ('900x700')
-menubar = Menu(m)
+
+#Add text window to my user interface
+def add_text(m):
+    prg_desc= Label(m, text= "PYTHON GRADEBOOK \n Anicet Akanza \n Application Development\n Graphical User Interface Assignment", anchor="center", justify="center")
+    # Use grid or pack to place the Text widget in the root window
+    prg_desc.grid(row=0, column=0, rowspan=15)  # You can also use text_widget.grid(row=row_num, column=col_num)
+    
+#Create the interface   
+def createGUI():
+    m.title ('Python GUI Gradebook')
+    m.geometry ('1000x700')
+    menubar = Menu(m)
+    add_text(m)
+    return menubar
 
 def newWindow():
     m = tk.Tk(); 
@@ -22,6 +33,7 @@ def closeWindow():
 
 
 def createMenu():
+    menubar = createGUI()
     #Add each tab of the menu
     file_menu = Menu(menubar, tearoff=0)
     file_menu.add_command(label= 'New Window' , command=newWindow)
@@ -148,6 +160,9 @@ def compute_letter_grade(grades):
     '''for i in range (len(list_of_grade_letters)):
         grades[i].append(list_of_grade_letters[i])'''
     return grades
+
+
+
 
 
 
