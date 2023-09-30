@@ -7,20 +7,27 @@ import csv;
 import copy;
 
 #Create a frame 
-m = tk.Tk(); 
-
+m = tk.Tk();
 #Add text window to my user interface
-def add_text(m):
-    prg_desc= Label(m, text= "PYTHON GRADEBOOK \n Anicet Akanza \n Application Development\n Graphical User Interface Assignment", anchor="center", justify="center")
-    # Use grid or pack to place the Text widget in the root window
-    prg_desc.grid(row=0, column=0, rowspan=15)  # You can also use text_widget.grid(row=row_num, column=col_num)
+def add_text(m):    
+    # Create a LabelFrame for the welcome message
+    welcome_frame = ttk.LabelFrame(m)
+    welcome_frame.pack(padx=10, pady=10, fill="both", expand="yes")
+
+    # Display the welcome message
+    welcome_label = ttk.Label(welcome_frame, text="PYTHON GRADEBOOK \n Anicet Akanza \n Application Development\n Graphical User Interface Assignment")
+    welcome_label.pack(padx=10, pady=10)
     
 #Create the interface   
 def createGUI():
     m.title ('Python GUI Gradebook')
     m.geometry ('1000x700')
     menubar = Menu(m)
+    #Create the first frame for adding the text
+    #text_frame = LabelFrame(m, text="PYTHON GRADEBOOK \n Anicet Akanza \n Application Development\n Graphical User Interface Assignment")
     add_text(m)
+    #Add the second frame that will have the computation result
+    #result_frame.grid(row=2, column=0, rowspan=15)
     return menubar
 
 def newWindow():
@@ -58,13 +65,14 @@ def writeToFile(list):
         writer.writerows(list)
 
 def openFile():
-    filename = filedialog.askopenfilename(initialdir = "/",
+    filename = filedialog.askopenfilename(initialdir = "C:/Users/Anicet/Documents/ESU/IS 826 OA",
                                           title = "Select a File",
-                                          filetypes = (("Text files",
-                                                        "*.txt*"),
+                                          filetypes = (('text files', '*.txt'),
                                                        ("all files",
                                                         "*.*")))
-    readFromFile(filename)
+    file_read = readFromFile(filename)
+    createTable(file_read)
+
     
 def computeStudentAvg(grades):
     # Compute the student average
@@ -162,13 +170,36 @@ def compute_letter_grade(grades):
     return grades
 
 
+#This function generate a table to display the gradebook file selected by the user. 
+def createTable(grade_list):
+    # Read the contents of the opened file.
+    # Print the contents of the file to the interface
+    csv_frame = ttk.LabelFrame(m)
+    csv_frame.pack(padx=10, pady=10, fill="both", expand="yes")
+    # Display CSV data in a Treeview widget
+    columns = grade_list[0]  # Assume the first row contains column names
+    tree = ttk.Treeview(csv_frame, columns=columns, show='headings')
 
+    # Set column headings
+    for col in columns:
+        tree.heading(col, text=col)
+        tree.column(col, width=100)  # Adjust column width as needed
 
+    # Populate the Treeview with data
+    for row in grade_list[1:]:
+        tree.insert('', 'end', values=row)
+        
+    #Add the other results to the display
+    
+
+    tree.pack(fill="both", expand="yes")
 
 
 def main():
     createMenu()
+    
 
-if __name__=="__main__":   
-    main()
+if __name__=="__main__": 
+    main()  
     m.mainloop()
+    
