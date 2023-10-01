@@ -8,11 +8,12 @@ import copy;
 
 #Create a frame 
 m = tk.Tk();
+file_read = [] #List to store the list of values from the file read
 #Add text window to my user interface
 def add_text(m):    
     # Create a LabelFrame for the welcome message
     welcome_frame = ttk.LabelFrame(m)
-    welcome_frame.pack(padx=10, pady=10, fill="both", expand="yes")
+    welcome_frame.pack(padx=10, pady=10, fill="both")
 
     # Display the welcome message
     welcome_label = ttk.Label(welcome_frame, text="PYTHON GRADEBOOK \n Anicet Akanza \n Application Development\n Graphical User Interface Assignment")
@@ -21,7 +22,7 @@ def add_text(m):
 #Create the interface   
 def createGUI():
     m.title ('Python GUI Gradebook')
-    m.geometry ('1000x700')
+    m.geometry ('1000x1200')
     menubar = Menu(m)
     #Create the first frame for adding the text
     #text_frame = LabelFrame(m, text="PYTHON GRADEBOOK \n Anicet Akanza \n Application Development\n Graphical User Interface Assignment")
@@ -72,6 +73,7 @@ def openFile():
                                                         "*.*")))
     file_read = readFromFile(filename)
     createTable(file_read)
+    createGraph(file_read)
 
     
 def computeStudentAvg(grades):
@@ -163,11 +165,11 @@ def compute_letter_grade(grades):
     for item in compute_grade_average_class:   
         for i in item: 
             list_of_grade_letters.append(getGrade(i)) # Add each grade let'ter
-    list_of_grade_letters.insert(0, 'Letter Grade') #Insert the expression 'Letter Grade' for display purposes
+    #list_of_grade_letters.insert(0, 'Letter Grade') #Insert the expression 'Letter Grade' for display purposes
     grades.append (list_of_grade_letters)#Add the letter grades to the original container
     '''for i in range (len(list_of_grade_letters)):
         grades[i].append(list_of_grade_letters[i])'''
-    return grades
+    return list_of_grade_letters
 
 
 #This function generate a table to display the gradebook file selected by the user. 
@@ -175,7 +177,7 @@ def createTable(grade_list):
     # Read the contents of the opened file.
     # Print the contents of the file to the interface
     csv_frame = ttk.LabelFrame(m)
-    csv_frame.pack(padx=10, pady=10, fill="both", expand="yes")
+    csv_frame.pack(padx=10, pady=10, fill="both")
     # Display CSV data in a Treeview widget
     columns = grade_list[0]  # Assume the first row contains column names
     tree = ttk.Treeview(csv_frame, columns=columns, show='headings')
@@ -190,10 +192,48 @@ def createTable(grade_list):
         tree.insert('', 'end', values=row)
         
     #Add the other results to the display
-    
-
     tree.pack(fill="both", expand="yes")
 
+def createGraph(file):
+    #Get the list of grade letters
+    grade_letters = compute_letter_grade(file)
+    #Get the percentage of A's in the letter grade 
+    count_of_a = 0
+    count_of_b = 0
+    count_of_c = 0
+    count_of_d = 0
+    count_of_f = 0
+
+    #Loop through the grade letters to get the count.
+    for item in grade_letters:
+        if item == 'A':
+            count_of_a += 1
+        elif item == 'B':
+            count_of_b +=1
+        elif item == 'C':
+            count_of_c +=1
+        elif item == 'D':
+            count_of_d +=1
+        elif item == 'F':
+            count_of_f +=1
+
+    chart_frame = ttk.LabelFrame(m)
+    chart_frame.pack(padx=10, pady=10, fill="both", expand="yes")
+    #Create a canvas and add it to this frame. 
+    canvas = Canvas(chart_frame, width=100, height=100)
+    canvas.pack(padx=10, pady=10,fill="both", expand="yes")
+    #Add the canvas coordinates
+    st = 0
+    coord = 50, 50, 300, 300
+    #Add the percentage of grade letters to create the pie.
+    PieV=[(count_of_a *100/len(grade_letters)),(count_of_b *100/len(grade_letters)),(count_of_c *100/len(grade_letters)),(count_of_d *100/len(grade_letters)), (count_of_f *100/len(grade_letters))]
+    colV=["Red","Aqua","Green","Blue","Yellow"]
+    for val,col in zip(PieV,colV):    
+        canvas.create_arc(coord,start=st,extent = val*3.6,fill=col,outline=col)
+        st = st + val*3.6
+    canvas.create_rectangle((350, 350), (450, 150))
+    
+    
 
 def main():
     createMenu()
