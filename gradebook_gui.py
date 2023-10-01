@@ -72,7 +72,17 @@ def openFile():
                                                        ("all files",
                                                         "*.*")))
     file_read = readFromFile(filename)
-    createTable(file_read)
+    student_average = computeStudentAvg(file_read)
+    class_average = computeClassAvg(file_read)
+    letter_grade = compute_letter_grade(file_read)
+    final_list = copy.deepcopy(file_read)#Deep copy to not modify the originsl
+    letter_grade.insert(0, 'Letter Grade') #Add the letter grade header
+
+    #Add the computation to the final list to print
+    final_list.append(student_average) 
+    final_list.append(class_average)
+    final_list.append(letter_grade)
+    createTable(final_list)
     createGraph(file_read)
 
     
@@ -91,11 +101,11 @@ def computeStudentAvg(grades):
         #Compute the grades for each student and add it to the list of student average grades. 
         compute_student_average.append((sum(student_grades)/len(student_grades)))
     compute_student_average.insert(0,'Average')
-    grades.append(compute_student_average)
+    #grades.append(compute_student_average)
     '''for i in range (len(grades)):
         grades[i].append(compute_student_average[i])'''
     
-    return grades
+    return compute_student_average
 
 def computeClassAvg(grades):
     list_average = []; #This item will store the list of average per grade group
@@ -112,8 +122,8 @@ def computeClassAvg(grades):
     column_average = [sum(sub_list) / len(sub_list) for sub_list in zip(*list_average)];
     column_average.append(sum(column_average)/len(column_average))
     column_average.insert(0, 'Class Average')
-    grades.append(column_average)
-    return grades
+    #grades.append(column_average)
+    return column_average
 
 
 
@@ -177,7 +187,7 @@ def createTable(grade_list):
     # Read the contents of the opened file.
     # Print the contents of the file to the interface
     csv_frame = ttk.LabelFrame(m)
-    csv_frame.pack(padx=10, pady=10, fill="both")
+    csv_frame.pack(padx=10, pady=10, fill="both", expand="yes")
     # Display CSV data in a Treeview widget
     columns = grade_list[0]  # Assume the first row contains column names
     tree = ttk.Treeview(csv_frame, columns=columns, show='headings')
